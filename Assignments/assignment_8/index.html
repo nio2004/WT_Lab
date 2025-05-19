@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electricity Billing System</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .rate-card {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .bill-result {
+      display: none;
+      margin-top: 20px;
+    }
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <h1 class="text-center mb-4">Electricity Billing System</h1>
+    
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="calculate-tab" data-bs-toggle="tab" data-bs-target="#calculate" type="button" role="tab">Calculate Bill</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="consumer-tab" data-bs-toggle="tab" data-bs-target="#consumer" type="button" role="tab">Add Consumer</button>
+              </li>
+            </ul>
+          </div>
+          <div class="card-body">
+            <div class="tab-content" id="myTabContent">
+              <!-- Calculate Bill Tab -->
+              <div class="tab-pane fade show active" id="calculate" role="tabpanel">
+                <div class="rate-card">
+                  <h5>Bill Calculation Rates:</h5>
+                  <ul class="mb-0">
+                    <li>First 50 units: Rs. 3.50/unit</li>
+                    <li>Next 100 units: Rs. 4.00/unit</li>
+                    <li>Next 100 units: Rs. 5.20/unit</li>
+                    <li>Above 250 units: Rs. 6.50/unit</li>
+                  </ul>
+                </div>
+                
+                <form id="billCalculationForm">
+                  <div class="mb-3">
+                    <label for="consumer" class="form-label">Select Consumer:</label>
+                    <select class="form-select" id="consumer" required>
+                      <option value="">Select consumer</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="units" class="form-label">Units Consumed:</label>
+                    <input type="number" class="form-control" id="units" min="1" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Calculate & Save Bill</button>
+                </form>
+                
+                <div id="billResult" class="bill-result alert alert-success">
+                  <h5>Bill Details:</h5>
+                  <div id="billDetails"></div>
+                </div>
+              </div>
+              
+              <!-- Add Consumer Tab -->
+              <div class="tab-pane fade" id="consumer" role="tabpanel">
+                <form id="consumerForm">
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <input type="text" class="form-control" id="name" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="address" class="form-label">Address:</label>
+                    <textarea class="form-control" id="address" rows="2" required></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label for="phone" class="form-label">Phone:</label>
+                    <input type="text" class="form-control" id="phone" required>
+                  </div>
+                  <button type="submit" class="btn btn-success">Add Consumer</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">Bill History</div>
+          <div class="card-body">
+            <div id="billHistory">
+              <p class="text-center text-muted">Select a consumer to view bill history</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- API Testing Info -->
+        <div class="card mt-3">
+          <div class="card-header bg-info text-white">API Testing Info</div>
+          <div class="card-body">
+            <h6>Endpoints for Postman/Thunder:</h6>
+            <ul class="mb-0">
+              <li><code>GET /api/consumers</code> - List all consumers</li>
+              <li><code>POST /api/consumers</code> - Add new consumer</li>
+              <li><code>GET /api/calculate-bill?units=120</code> - Calculate bill</li>
+              <li><code>POST /api/billing</code> - Generate and save bill</li>
+              <li><code>GET /api/billing/history/{consumerId}</code> - Get bill history</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>Electricity Billing System - Node.js + MySQL Implementation</p>
+    </div>
+  </div>
+
+  <!-- jQuery and Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

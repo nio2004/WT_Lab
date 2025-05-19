@@ -1,0 +1,47 @@
+body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #0d6efd;
+}
+
+.project-card {
+    transition: transform 0.3s;
+    margin-bottom: 20px;
+    height: 100%;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-footer {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.jumbotron {
+    background-color: #e9ecef;
+    padding: 2rem;
+    border-radius: 0.3rem;
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .nav-pills {
+        flex-direction: column;
+    }
+    
+    .nav-pills .nav-item {
+        margin-bottom: 5px;
+    }
+}
+
+.project-card .badge {
+    font-size: 0.8rem;
+}

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Bill Calculator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .bill-card {
+            display: none;
+            margin-top: 20px;
+        }
+        .rate-info {
+            font-size: 0.9rem;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Electricity Bill Calculator</h1>
+        
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="rate-info">
+                    <strong>Bill Calculation Rates:</strong>
+                    <ul class="mb-0">
+                        <li>First 50 units: Rs. 3.50/unit</li>
+                        <li>Next 100 units: Rs. 4.00/unit</li>
+                        <li>Next 100 units: Rs. 5.20/unit</li>
+                        <li>Above 250 units: Rs. 6.50/unit</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" id="calculatorTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="quick-tab" data-bs-toggle="tab" data-bs-target="#quick" type="button" role="tab">Quick Calculate</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="consumer-tab" data-bs-toggle="tab" data-bs-target="#consumer" type="button" role="tab">Save Bill</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="calculatorTabContent">
+                            <!-- Quick Calculate Tab -->
+                            <div class="tab-pane fade show active" id="quick" role="tabpanel">
+                                <form id="quickCalculateForm">
+                                    <div class="mb-3">
+                                        <label for="units" class="form-label">Units Consumed:</label>
+                                        <input type="number" class="form-control" id="units" min="0" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Calculate Bill</button>
+                                </form>
+                            </div>
+                            
+                            <!-- Consumer Bill Tab -->
+                            <div class="tab-pane fade" id="consumer" role="tabpanel">
+                                <form id="consumerBillForm">
+                                    <div class="mb-3">
+                                        <label for="consumer" class="form-label">Select Consumer:</label>
+                                        <select class="form-select" id="consumer" required>
+                                            <option value="">Select a consumer</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="consumerUnits" class="form-label">Units Consumed:</label>
+                                        <input type="number" class="form-control" id="consumerUnits" min="0" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Bill</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Result Card -->
+                <div class="card bill-card" id="resultCard">
+                    <div class="card-header bg-success text-white">
+                        Bill Results
+                    </div>
+                    <div class="card-body">
+                        <div id="billResults"></div>
+                    </div>
+                </div>
+                
+                <!-- API Testing Info -->
+                <div class="card mt-4">
+                    <div class="card-header bg-info text-white">
+                        Postman/Thunder API Testing
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Endpoint:</strong> <code>api.php</code></p>
+                        <p><strong>Method:</strong> POST</p>
+                        <p><strong>Body:</strong> JSON</p>
+                        <pre><code>{
+  "units": 180,
+  "consumer_id": 1  // Optional
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Last updated: 2025-05-19 16:12:20 | User: nio2004</p>
+        </div>
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Load consumers when the page loads
+            $.get('api.php?action=getConsumers', function(response) {
+                if (response.status === 'success') {
+                    const consumers = response.data;
+                    const select = $('#consumer');
+                    
+                    consumers.forEach(function(consumer) {
+                        select.append(`<option value="${consumer.consumer_id}">${consumer.name} - ${consumer.phone}</option>`);
+                    });
+                }
+            });
+            
+            // Quick Calculate Form Submit
+            $('#quickCalculateForm').submit(function(e) {
+                e.preventDefault();
+                const units = $('#units').val();
+                
+                $.ajax({
+                    url: 'api.php',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ units: units }),
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            displayBillResults(response.data);
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while calculating the bill');
+                    }
+                });
+            });
+            
+            // Consumer Bill Form Submit
+            $('#consumerBillForm').submit(function(e) {
+                e.preventDefault();
+                const consumerId = $('#consumer').val();
+                const units = $('#consumerUnits').val();
+                
+                $.ajax({
+                    url: 'api.php',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ 
+                        consumer_id: consumerId,
+                        units: units 
+                    }),
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            displayBillResults(response.data, true);
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while saving the bill');
+                    }
+                });
+            });
+            
+            // Function to display bill results
+            function displayBillResults(data, isSaved = false) {
+                let html = `
+                    <h5>Bill Details</h5>
+                    <table class="table">
+                        <tr>
+                            <td><strong>Units Consumed:</strong></td>
+                            <td>${data.units_consumed}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bill Amount:</strong></td>
+                            <td>Rs. ${data.bill_amount}</td>
+                        </tr>
+                `;
+                
+                if (isSaved) {
+                    html += `
+                        <tr>
+                            <td><strong>Bill ID:</strong></td>
+                            <td>${data.bill_id}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Consumer ID:</strong></td>
+                            <td>${data.consumer_id}</td>
+                        </tr>
+                    `;
+                }
+                
+                html += `</table>`;
+                
+                if (isSaved) {
+                    html += `<div class="alert alert-success">Bill saved successfully!</div>`;
+                }
+                
+                $('#billResults').html(html);
+                $('#resultCard').fadeIn();
+            }
+        });
+    </script>
+</body>
+</html>

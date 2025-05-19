@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BFS and DFS Demonstration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .graph-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        #graphCanvas {
+            border: 1px solid #ddd;
+            background: white;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        button {
+            padding: 8px 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 100px;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BFS and DFS Demonstration</h1>
+        
+        <div class="graph-container">
+            <canvas id="graphCanvas" width="400" height="300"></canvas>
+        </div>
+        
+        <div class="controls">
+            <button id="bfsButton">Run BFS</button>
+            <button id="dfsButton">Run DFS</button>
+            <button id="resetButton">Reset Graph</button>
+        </div>
+        
+        <div class="output" id="output">
+            <p>Search results will appear here...</p>
+        </div>
+        
+        <div class="footer">
+            <p>Date: 2025-05-19 13:20:55 | User: nio2004</p>
+        </div>
+    </div>
+
+    <script>
+        // Simple graph representation using adjacency list
+        class Graph {
+            constructor() {
+                this.adjacencyList = {};
+            }
+            
+            // Add a vertex to the graph
+            addVertex(vertex) {
+                if (!this.adjacencyList[vertex]) {
+                    this.adjacencyList[vertex] = [];
+                }
+            }
+            
+            // Add an edge between two vertices
+            addEdge(vertex1, vertex2) {
+                this.adjacencyList[vertex1].push(vertex2);
+                this.adjacencyList[vertex2].push(vertex1);
+            }
+            
+            // Breadth-First Search
+            bfs(start) {
+                const queue = [start];
+                const result = [];
+                const visited = {};
+                visited[start] = true;
+                
+                while (queue.length) {
+                    const currentVertex = queue.shift();
+                    result.push(currentVertex);
+                    
+                    this.adjacencyList[currentVertex].forEach(neighbor => {
+                        if (!visited[neighbor]) {
+                            visited[neighbor] = true;
+                            queue.push(neighbor);
+                        }
+                    });
+                }
+                
+                return result;
+            }
+            
+            // Depth-First Search (recursive)
+            dfs(start) {
+                const result = [];
+                const visited = {};
+                
+                const dfsHelper = (vertex) => {
+                    if (!vertex) return;
+                    
+                    visited[vertex] = true;
+                    result.push(vertex);
+                    
+                    this.adjacencyList[vertex].forEach(neighbor => {
+                        if (!visited[neighbor]) {
+                            dfsHelper(neighbor);
+                        }
+                    });
+                };
+                
+                dfsHelper(start);
+                return result;
+            }
+        }
+        
+        // Create a sample graph
+        const graph = new Graph();
+        
+        // Define vertices (integers from 1 to 6)
+        for (let i = 1; i <= 6; i++) {
+            graph.addVertex(i);
+        }
+        
+        // Define edges to create a sample graph structure
+        graph.addEdge(1, 2);
+        graph.addEdge(1, 3);
+        graph.addEdge(2, 4);
+        graph.addEdge(2, 5);
+        graph.addEdge(3, 5);
+        graph.addEdge(4, 6);
+        graph.addEdge(5, 6);
+        
+        // Node positions for visualization
+        const nodePositions = {
+            1: { x: 200, y: 50 },
+            2: { x: 100, y: 120 },
+            3: { x: 300, y: 120 },
+            4: { x: 50, y: 200 },
+            5: { x: 200, y: 200 },
+            6: { x: 125, y: 260 }
+        };
+        
+        // Get references to HTML elements
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+        const output = document.getElementById('output');
+        
+        // Function to draw the graph
+        function drawGraph(highlightedNodes = [], sequence = []) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw edges
+            ctx.strokeStyle = '#aaa';
+            ctx.lineWidth = 2;
+            
+            for (const vertex in graph.adjacencyList) {
+                const { x: x1, y: y1 } = nodePositions[vertex];
+                
+                for (const neighbor of graph.adjacencyList[vertex]) {
+                    if (neighbor > vertex) { // Avoid drawing the same edge twice
+                        const { x: x2, y: y2 } = nodePositions[neighbor];
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                    }
+                }
+            }
+            
+            // Draw nodes
+            for (const vertex in nodePositions) {
+                const { x, y } = nodePositions[vertex];
+                
+                // Determine node color based on highlighting
+                if (highlightedNodes.includes(parseInt(vertex))) {
+                    const index = highlightedNodes.indexOf(parseInt(vertex));
+                    const hue = (index / highlightedNodes.length) * 360;
+                    ctx.fillStyle = `hsl(${hue}, 80%, 70%)`;
+                } else {
+                    ctx.fillStyle = '#4CAF50';
+                }
+                
+                // Draw node
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw node value
+                ctx.fillStyle = 'white';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(vertex, x, y);
+                
+                // Draw sequence number if available
+                if (sequence.indexOf(parseInt(vertex)) !== -1) {
+                    const seqNum = sequence.indexOf(parseInt(vertex)) + 1;
+                    ctx.fillStyle = 'black';
+                    ctx.font = '12px Arial';
+                    ctx.fillText(seqNum, x + 25, y - 10);
+                }
+            }
+        }
+        
+        // Initialize the graph visualization
+        drawGraph();
+        
+        // Event listeners
+        document.getElementById('bfsButton').addEventListener('click', () => {
+            const bfsResult = graph.bfs(1);
+            output.innerHTML = `<p><strong>Breadth-First Search Result:</strong> ${bfsResult.join(' → ')}</p>`;
+            
+            // Animate the BFS
+            let step = 0;
+            const interval = setInterval(() => {
+                step++;
+                if (step > bfsResult.length) {
+                    clearInterval(interval);
+                    return;
+                }
+                drawGraph(bfsResult.slice(0, step), bfsResult);
+            }, 800);
+        });
+        
+        document.getElementById('dfsButton').addEventListener('click', () => {
+            const dfsResult = graph.dfs(1);
+            output.innerHTML = `<p><strong>Depth-First Search Result:</strong> ${dfsResult.join(' → ')}</p>`;
+            
+            // Animate the DFS
+            let step = 0;
+            const interval = setInterval(() => {
+                step++;
+                if (step > dfsResult.length) {
+                    clearInterval(interval);
+                    return;
+                }
+                drawGraph(dfsResult.slice(0, step), dfsResult);
+            }, 800);
+        });
+        
+        document.getElementById('resetButton').addEventListener('click', () => {
+            drawGraph();
+            output.innerHTML = "<p>Search results will appear here...</p>";
+        });
+    </script>
+</body>
+</html>

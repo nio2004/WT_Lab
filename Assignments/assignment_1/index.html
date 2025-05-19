@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIT Projects Showcase</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">VIT Projects Showcase</h1>
+        
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-pills mb-4 justify-content-center" id="projectTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="home-tab" data-bs-toggle="pill" data-bs-target="#home" type="button" role="tab">Home</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="course-tab" data-bs-toggle="pill" data-bs-target="#course" type="button" role="tab">Course Projects</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="edi-tab" data-bs-toggle="pill" data-bs-target="#edi" type="button" role="tab">EDI Projects</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="add-tab" data-bs-toggle="pill" data-bs-target="#add" type="button" role="tab">Add Project</button>
+            </li>
+        </ul>
+        
+        <!-- Tab Content -->
+        <div class="tab-content" id="projectTabsContent">
+            <!-- Home Tab -->
+            <div class="tab-pane fade show active" id="home" role="tabpanel">
+                <div class="jumbotron">
+                    <h2>Welcome to VIT Projects Showcase</h2>
+                    <p class="lead">Explore the innovative Course Projects and EDI Projects developed by VIT students.</p>
+                    <hr class="my-4">
+                    <p>Use the tabs above to navigate between different project categories.</p>
+                </div>
+            </div>
+            
+            <!-- Course Projects Tab -->
+            <div class="tab-pane fade" id="course" role="tabpanel">
+                <h2>Course Projects</h2>
+                <p>Projects developed as part of academic courses at VIT.</p>
+                
+                <div class="row" id="courseProjectsList">
+                    <!-- Course projects will be dynamically loaded here -->
+                </div>
+            </div>
+            
+            <!-- EDI Projects Tab -->
+            <div class="tab-pane fade" id="edi" role="tabpanel">
+                <h2>EDI Projects</h2>
+                <p>Engineering Design and Innovation projects developed at VIT.</p>
+                
+                <div class="row" id="ediProjectsList">
+                    <!-- EDI projects will be dynamically loaded here -->
+                </div>
+            </div>
+            
+            <!-- Add Project Tab -->
+            <div class="tab-pane fade" id="add" role="tabpanel">
+                <h2>Add New Project</h2>
+                
+                <form id="projectForm">
+                    <div class="mb-3">
+                        <label for="projectTitle" class="form-label">Project Title</label>
+                        <input type="text" class="form-control" id="projectTitle" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="projectDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="projectDescription" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="projectTeam" class="form-label">Team Members</label>
+                        <input type="text" class="form-control" id="projectTeam" placeholder="Comma-separated names">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="projectCategory" class="form-label">Category</label>
+                        <select class="form-select" id="projectCategory" required>
+                            <option value="">Select category</option>
+                            <option value="course">Course Project</option>
+                            <option value="edi">EDI Project</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="projectRelevance" class="form-label">Project Relevance</label>
+                        <textarea class="form-control" id="projectRelevance" rows="2" placeholder="Explain the relevance and impact of this project"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Save Project</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div class="modal fade" id="projectModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+</html>

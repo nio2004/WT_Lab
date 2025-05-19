@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree Search & Sort Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .input-section {
+            margin-bottom: 20px;
+        }
+        #tree-display {
+            white-space: pre;
+            font-family: monospace;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+        button {
+            margin-right: 5px;
+            padding: 8px 12px;
+        }
+        input {
+            padding: 8px;
+            width: 60px;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Binary Search Tree Demo</h1>
+        
+        <div class="input-section">
+            <h3>Add Numbers to the Tree</h3>
+            <input type="number" id="number-input" placeholder="Enter an integer">
+            <button onclick="addNumber()">Add Number</button>
+            <button onclick="resetTree()">Reset Tree</button>
+        </div>
+        
+        <div class="input-section">
+            <h3>Tree Operations</h3>
+            <button onclick="searchNumber()">Search</button>
+            <input type="number" id="search-input" placeholder="Number">
+            <button onclick="inOrderTraversal()">In-Order Sort</button>
+            <button onclick="preOrderTraversal()">Pre-Order</button>
+            <button onclick="postOrderTraversal()">Post-Order</button>
+        </div>
+        
+        <h3>Tree Visualization</h3>
+        <div id="tree-display">Tree is empty</div>
+        
+        <div class="result" id="result-area">Results will appear here</div>
+    </div>
+    
+    <!-- <div class="footer">
+        <p>Date: 2025-05-19 | User: nio2004</p>
+    </div> -->
+
+    <script>
+        // Binary Search Tree implementation
+        class Node {
+            constructor(value) {
+                this.value = value;
+                this.left = null;
+                this.right = null;
+            }
+        }
+        
+        class BinarySearchTree {
+            constructor() {
+                this.root = null;
+            }
+            
+            // Insert a value into the tree
+            insert(value) {
+                const newNode = new Node(value);
+                
+                if (this.root === null) {
+                    this.root = newNode;
+                    return this;
+                }
+                
+                let current = this.root;
+                
+                while (true) {
+                    // Skip duplicates
+                    if (value === current.value) return this;
+                    
+                    // Go left if value is smaller
+                    if (value < current.value) {
+                        if (current.left === null) {
+                            current.left = newNode;
+                            return this;
+                        }
+                        current = current.left;
+                    } 
+                    // Go right if value is larger
+                    else {
+                        if (current.right === null) {
+                            current.right = newNode;
+                            return this;
+                        }
+                        current = current.right;
+                    }
+                }
+            }
+            
+            // Search for a value in the tree
+            search(value) {
+                if (this.root === null) return false;
+                
+                let current = this.root;
+                let path = [current.value];
+                
+                while (current) {
+                    if (value === current.value) return { found: true, path };
+                    
+                    if (value < current.value) {
+                        current = current.left;
+                    } else {
+                        current = current.right;
+                    }
+                    
+                    if (current) path.push(current.value);
+                }
+                
+                return { found: false, path };
+            }
+            
+            // In-order traversal (sorted order)
+            inOrder() {
+                let result = [];
+                
+                function traverse(node) {
+                    if (node.left) traverse(node.left);
+                    result.push(node.value);
+                    if (node.right) traverse(node.right);
+                }
+                
+                if (this.root) traverse(this.root);
+                return result;
+            }
+            
+            // Pre-order traversal
+            preOrder() {
+                let result = [];
+                
+                function traverse(node) {
+                    result.push(node.value);
+                    if (node.left) traverse(node.left);
+                    if (node.right) traverse(node.right);
+                }
+                
+                if (this.root) traverse(this.root);
+                return result;
+            }
+            
+            // Post-order traversal
+            postOrder() {
+                let result = [];
+                
+                function traverse(node) {
+                    if (node.left) traverse(node.left);
+                    if (node.right) traverse(node.right);
+                    result.push(node.value);
+                }
+                
+                if (this.root) traverse(this.root);
+                return result;
+            }
+            
+            // Generate ASCII tree visualization
+            visualize() {
+                if (!this.root) return "Tree is empty";
+                
+                let result = "";
+                
+                function printNode(node, prefix, isLeft) {
+                    if (node === null) return;
+                    
+                    result += prefix;
+                    result += isLeft ? "├── " : "└── ";
+                    result += node.value + "\n";
+                    
+                    printNode(node.left, prefix + (isLeft ? "│   " : "    "), true);
+                    printNode(node.right, prefix + (isLeft ? "│   " : "    "), false);
+                }
+                
+                result += this.root.value + "\n";
+                printNode(this.root.left, "", true);
+                printNode(this.root.right, "", false);
+                
+                return result;
+            }
+        }
+        
+        // Create a BST instance
+        let bst = new BinarySearchTree();
+        
+        // Add a number to the tree
+        function addNumber() {
+            const input = document.getElementById('number-input');
+            const value = parseInt(input.value);
+            
+            if (isNaN(value)) {
+                alert("Please enter a valid integer");
+                return;
+            }
+            
+            bst.insert(value);
+            updateTreeDisplay();
+            input.value = '';
+        }
+        
+        // Reset the tree
+        function resetTree() {
+            bst = new BinarySearchTree();
+            updateTreeDisplay();
+            document.getElementById('result-area').innerHTML = "Tree has been reset";
+        }
+        
+        // Search for a number in the tree
+        function searchNumber() {
+            const input = document.getElementById('search-input');
+            const value = parseInt(input.value);
+            
+            if (isNaN(value)) {
+                alert("Please enter a valid integer");
+                return;
+            }
+            
+            const result = bst.search(value);
+            
+            if (result.found) {
+                document.getElementById('result-area').innerHTML = 
+                    `Found ${value} in the tree!<br>Search path: ${result.path.join(' → ')}`;
+            } else {
+                document.getElementById('result-area').innerHTML = 
+                    `${value} not found in the tree<br>Search path: ${result.path.join(' → ')}`;
+            }
+        }
+        
+        // Perform in-order traversal (sorted result)
+        function inOrderTraversal() {
+            const result = bst.inOrder();
+            document.getElementById('result-area').innerHTML = 
+                `<strong>In-Order Traversal (Sorted):</strong><br>${result.join(', ')}`;
+        }
+        
+        // Perform pre-order traversal
+        function preOrderTraversal() {
+            const result = bst.preOrder();
+            document.getElementById('result-area').innerHTML = 
+                `<strong>Pre-Order Traversal:</strong><br>${result.join(', ')}`;
+        }
+        
+        // Perform post-order traversal
+        function postOrderTraversal() {
+            const result = bst.postOrder();
+            document.getElementById('result-area').innerHTML = 
+                `<strong>Post-Order Traversal:</strong><br>${result.join(', ')}`;
+        }
+        
+        // Update the tree display
+        function updateTreeDisplay() {
+            const display = document.getElementById('tree-display');
+            display.textContent = bst.visualize();
+        }
+    </script>
+</body>
+</html>

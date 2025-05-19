@@ -1,0 +1,105 @@
+### REST Client for testing Electricity Billing API (Node.js version)
+### Use this file with REST Client extensions in VS Code, IntelliJ, or similar
+
+@baseUrl = http://localhost:3000
+
+### ----------------------
+### CONSUMER ENDPOINTS
+### ----------------------
+
+### Get all consumers
+GET http://localhost:3000/api/consumers
+Content-Type: application/json
+
+### Get consumer by ID (replace 1 with actual consumer ID)
+GET {{baseUrl}}/api/consumers/1
+Content-Type: application/json
+
+### Create a new consumer
+POST {{baseUrl}}/api/consumers
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "address": "123 Test Street, City",
+  "phone": "9876543210"
+}
+
+### ----------------------
+### BILLING ENDPOINTS
+### ----------------------
+
+### Calculate bill (without saving)
+GET {{baseUrl}}/api/calculate-bill?units=75
+Content-Type: application/json
+
+### Calculate another bill example
+GET {{baseUrl}}/api/calculate-bill?units=200
+Content-Type: application/json
+
+### Generate and save bill for consumer
+POST {{baseUrl}}/api/billing
+Content-Type: application/json
+
+{
+  "consumerId": 1,
+  "units": 150
+}
+
+### Get billing history for a consumer
+GET {{baseUrl}}/api/billing/history/1
+Content-Type: application/json
+
+### ----------------------
+### ADDITIONAL TEST CASES
+### ----------------------
+
+### Create another test consumer
+POST {{baseUrl}}/api/consumers
+Content-Type: application/json
+
+{
+  "name": "Jane Smith",
+  "address": "456 Park Avenue, Town",
+  "phone": "8765432109"
+}
+
+### Generate bill with low units (first tier)
+POST {{baseUrl}}/api/billing
+Content-Type: application/json
+
+{
+  "consumerId": 1,
+  "units": 30
+}
+
+### Generate bill with medium units (second tier)
+POST {{baseUrl}}/api/billing
+Content-Type: application/json
+
+{
+  "consumerId": 2,
+  "units": 120
+}
+
+### Generate bill with high units (third tier)
+POST {{baseUrl}}/api/billing
+Content-Type: application/json
+
+{
+  "consumerId": 1,
+  "units": 200
+}
+
+### Generate bill with very high units (fourth tier)
+POST {{baseUrl}}/api/billing
+Content-Type: application/json
+
+{
+  "consumerId": 2,
+  "units": 350
+}
+
+### Get billing history for second consumer
+GET {{baseUrl}}/api/billing/history/2
+Content-Type: application/json
